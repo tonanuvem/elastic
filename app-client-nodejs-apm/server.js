@@ -16,7 +16,7 @@ var app = express();
 var fs = require('fs');
 var path = require('path');
 
-app.use("/ati_arquivos", express.static(path.resolve(__dirname, 'ati_arquivos')));
+app.use("/64aoj_arquivos", express.static(path.resolve(__dirname, '64aoj_arquivos')));
 
 app.get("/", function(req, res) {
   fs.readFile('index.html', function(err, data) {
@@ -27,21 +27,21 @@ app.get("/", function(req, res) {
 });
 
 app.get("/healthcheck", function(req, res) {
-    res.send("OK: " + path.resolve(__dirname, 'ati_arquivos'));
-    app.use("/ati_arquivos", express.static(path.resolve(__dirname, 'ati_arquivos')));
+    res.send("OK: " + path.resolve(__dirname, '64aoj_arquivos'));
+    app.use("/64aoj_arquivos", express.static(path.resolve(__dirname, '64aoj_arquivos')));
 });
 
-app.get("/ati", function(req, res) {
-  ati_route()
-  fs.readFile('ati.htm', function(err, data) {
+app.get("/aoj", function(req, res) {
+  apm_route()
+  fs.readFile('64aoj.htm', function(err, data) {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write(data);
     res.end();
   });
 });
 
-function ati_route () {
-    var span = apm.startSpan('app.ati', 'custom')
+function apm_route () {
+    var span = apm.startSpan('app.fiap', 'custom')
     span.end()
 }
 
