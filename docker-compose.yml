@@ -62,9 +62,7 @@ services:
     depends_on:
       - elasticsearch
     command:
-      - chown
-      - root 
-      - metricbeat.yml
+      - bash chown root metricbeat.yml
 
 volumes:
   esdata:
