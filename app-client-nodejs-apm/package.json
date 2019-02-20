@@ -2,7 +2,7 @@
   "name": "docker_web_app",
   "version": "1.0.0",
   "description": "Node.js on Docker",
-  "author": "To na Nuvem <contato@tonanuvem.net>",
+  "author": "Alunos",
   "main": "app.js",
   "scripts": {
     "start": "node server.js"
