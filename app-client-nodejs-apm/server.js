@@ -3,7 +3,7 @@
 var apm = require('elastic-apm-node').start({
   frameworkName: 'express',
   frameworkVersion: 'unknown',
-  serviceName: 'aplicacao-25ati-nodejs-v2',
+  serviceName: 'aplicacao-fiap-nodejs-v2',
   serverUrl: 'http://apm-server:8200',
   flushInterval: 1,
   maxQueueSize: 1,
@@ -61,8 +61,8 @@ function extra_route () {
     span.end()
 }
 
-app.get("/oof", function(req, res, next) {
-    next(new Error("oof"));
+app.get("/erro", function(req, res, next) {
+    next(new Error("Error aconteceu"));
 });
 
 app.use(function (err, req, res, next) {
