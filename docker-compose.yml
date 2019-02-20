@@ -28,17 +28,15 @@ services:
     container_name: apm-server
     ports:
       - 8200:8200
-#    volumes:
-#      - ./apm-server.yml:/usr/share/apm-server/apm-server.yml
     networks:
       - elk
     depends_on:
       - elasticsearch
 
   app-client-apm-nodejs:
-    image: tonanuvem/app-client-apm-nodejs:2.0
-#    build:
-#      context: app-client-nodejs-apm/
+#    image: tonanuvem/app-client-apm-nodejs:2.0
+    build:
+      context: app-client-nodejs-apm/
     container_name: app-client-apm-nodejs
     ports:
       - 3000:3000
@@ -63,38 +61,6 @@ services:
       - elk
     depends_on:
       - elasticsearch
-
-#  logstash:
-#    image: logstash:6.5.2
-#    container_name: logstash
-#    volumes:
-#      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
-#      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
-#    ports:
-#      - "5000:5000"
-#      - "9600:9600"
-#    environment:
-#      - "ES_JAVA_OPTS=-Xmx256m -Xms256m"
-#    networks:
-#      - elk
-#    depends_on:
-#      - elasticsearch
-
-#  logspout:
-#    image: gliderlabs/logspout:latest
-#    container_name: logspout
-#    volumes:
-#      - /etc/hostname:/etc/host_hostname:ro
-#      - /var/run/docker.sock:/var/run/docker.sock
-#    command:
-#      syslog://logstash:5000
-#    environment:
-#      - "ROUTE_URIS=logstash://logstash:5000"
-#      - "LOGSTASH_TAGS: docker-elastic"
-#    networks:
-#      - elk
-#    depends_on:
-#      - logstash
 
 volumes:
   esdata:
