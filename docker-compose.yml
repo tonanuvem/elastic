@@ -62,9 +62,7 @@ services:
     depends_on:
       - elasticsearch
     entrypoint:
-      - chown 
-      - root 
-      - /usr/share/metricbeat/metricbeat.yml
+      - chown root /usr/share/metricbeat/metricbeat.yml
 
 volumes:
   esdata:
