@@ -61,8 +61,6 @@ services:
       - elk
     depends_on:
       - elasticsearch
-    entrypoint:
-      - chown root metricbeat.yml
 
 volumes:
   esdata:
