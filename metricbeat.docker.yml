@@ -1,3 +1,11 @@
+# It’s possible to embed your Metricbeat configuration in a custom image. Here is an example Dockerfile to achieve this:
+#
+# FROM docker.elastic.co/beats/metricbeat:6.6.1
+# COPY metricbeat.yml /usr/share/metricbeat/metricbeat.yml
+# USER root
+# RUN chown root:metricbeat /usr/share/metricbeat/metricbeat.yml
+# USER metricbeat
+
 metricbeat.config:
   modules:
     path: ${path.config}/modules.d/*.yml
