@@ -1,8 +1,8 @@
-# docker-elastic
+# docker-apm-monitoring
 
 Projeto desenvolvido para ser utilizado durante as aulas.
 
-> git clone https://github.com/tonanuvem/docker-elastic.git
+> git clone
 
 > docker-compose up –d
 
