@@ -1,0 +1,60 @@
+<html>
+<head>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.5.2.js"></script>
+</head>
+<body>
+        <h1>Envio de mensagem : Slack webhook test</h1> <br>
+<form id="slackform">
+  Channel : <input id="target" value="#monitoracao"/>
+  <br/>
+  Messsage : <input id="msgInput"/>
+  <br/> <br>
+ <input type="button" value="enviar" onclick="postMSG()"/>
+ </form>
+ <div id='result'></div>
+ <script type="text/javascript">
+  function postMSG(){
+    // get message to be posted
+    var msg = document.getElementById('msgInput').value
+    // get target channel or team member
+    var chan = document.getElementById('target').value
+    // format payload for slack
+    var sdata = formatForSlack(msg, chan)
+    // log in console
+    console.log(sdata)
+    // post
+     $.ajax({
+       // url is what you get from activating the "Incoming WebHooks" slack integration
+       // if you leave, you should see an error message "No Team", status 404
+       url: 'https://hooks.slack.com/services/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',
+       type: 'POST',
+       processData: true,
+       data : sdata ,
+       success : function(data) {
+         // success will show on page
+         console.log(data)
+         $('#result').html(data);
+       },
+       error: function(data){
+         // error will show error object
+         console.log(data)
+         $('#result').html("error:"+JSON.stringify(data));
+      }
+     });
+  }
+  /*
+  * format for slack
+  * change "username" per instructions
+  * change emoji icon if desired
+  */
+  function formatForSlack(msg, chan){
+    var payload ={
+      "channel":chan,
+      "username":'app_html',
+      "text": msg,
+      "icon_emoji":':ghost:'
+    };
+    // return json string of payload
+    return JSON.stringify(payload)
+  }
+ </script>

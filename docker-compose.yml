@@ -1,0 +1,103 @@
+version: '3'
+services:
+  elasticsearch:
+    image: elasticsearch:6.5.1
+    container_name: elasticsearch
+    environment:
+      - "http.host=0.0.0.0"
+      - "transport.host=127.0.0.1"
+      - "ES_JAVA_OPTS=-Xmx256m -Xms256m"
+      - "ELASTIC_PASSWORD=changeme"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    networks:
+      - elk
+
+  kibana:
+    image: kibana:6.5.1
+    container_name: kibana
+    ports:
+      - 5601:5601
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  apm-server:
+    image: elastic/apm-server:6.5.1
+    container_name: apm-server
+    ports:
+      - 8200:8200
+#    volumes:
+#      - ./apm-server.yml:/usr/share/apm-server/apm-server.yml
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  app-client-apm-nodejs:
+    image: tonanuvem/app-client-apm-nodejs:2.0
+#    build:
+#      context: app-client-nodejs-apm/
+    container_name: app-client-apm-nodejs
+    ports:
+      - 3000:3000
+    networks:
+      - elk
+    depends_on:
+      - apm-server
+
+  beats:
+    image: docker.elastic.co/beats/metricbeat:6.5.2
+    command:
+      - "-system.hostfs=/hostfs"
+    container_name: beats
+    user: root
+    volumes:
+      - ./metricbeat.yml:/usr/share/metricbeat/metricbeat.yml
+      - /proc:/hostfs/proc:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /:/hostfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+#  logstash:
+#    image: logstash:6.5.2
+#    container_name: logstash
+#    volumes:
+#      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+#      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+#    ports:
+#      - "5000:5000"
+#      - "9600:9600"
+#    environment:
+#      - "ES_JAVA_OPTS=-Xmx256m -Xms256m"
+#    networks:
+#      - elk
+#    depends_on:
+#      - elasticsearch
+
+#  logspout:
+#    image: gliderlabs/logspout:latest
+#    container_name: logspout
+#    volumes:
+#      - /etc/hostname:/etc/host_hostname:ro
+#      - /var/run/docker.sock:/var/run/docker.sock
+#    command:
+#      syslog://logstash:5000
+#    environment:
+#      - "ROUTE_URIS=logstash://logstash:5000"
+#      - "LOGSTASH_TAGS: docker-elastic"
+#    networks:
+#      - elk
+#    depends_on:
+#      - logstash
+
+volumes:
+  esdata:
+
+networks:
+  elk:
