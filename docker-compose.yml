@@ -34,9 +34,9 @@ services:
       - elasticsearch
 
   app-client-apm-nodejs:
-#    image: tonanuvem/app-client-apm-nodejs:2.0
-    build:
-      context: app-client-nodejs-apm/
+    image: tonanuvem/app-client-apm-nodejs:3.0
+#    build:
+#      context: app-client-nodejs-apm/
     container_name: app-client-apm-nodejs
     ports:
       - 3000:3000
