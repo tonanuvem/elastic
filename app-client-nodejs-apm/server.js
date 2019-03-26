@@ -16,7 +16,8 @@ var app = express();
 var fs = require('fs');
 var path = require('path');
 
-app.use("/64aoj_arquivos", express.static(path.resolve(__dirname, '64aoj_arquivos')));
+// app.use("/64aoj_arquivos", express.static(path.resolve(__dirname, '64aoj_arquivos')));
+app.use("/aoj/64aoj_arquivos", express.static(path.resolve(__dirname, '64aoj_arquivos')));
 
 app.get("/", function(req, res) {
   fs.readFile('index.html', function(err, data) {
