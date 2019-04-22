@@ -17,7 +17,7 @@ var fs = require('fs');
 var path = require('path');
 
 // app.use("/64aoj_arquivos", express.static(path.resolve(__dirname, '64aoj_arquivos')));
-app.use("/ati/( FIAP ) - Seção Alunos_files", express.static(path.resolve(__dirname, '( FIAP ) - Seção Alunos_files')));
+app.use("/ati/26ati_arquivos", express.static(path.resolve(__dirname, '26ati_arquivos')));
 
 app.get("/", function(req, res) {
   fs.readFile('index.html', function(err, data) {
@@ -28,8 +28,8 @@ app.get("/", function(req, res) {
 });
 
 app.get("/healthcheck", function(req, res) {
-    res.send("OK: " + path.resolve(__dirname, '( FIAP ) - Seção Alunos_files'));
-    app.use("/( FIAP ) - Seção Alunos_files", express.static(path.resolve(__dirname, '( FIAP ) - Seção Alunos_files')));
+    res.send("OK: " + path.resolve(__dirname, '26ati_arquivos'));
+    app.use("/26ati_arquivos", express.static(path.resolve(__dirname, '26ati_arquivos')));
 });
 
 app.get("/fiap", function(req, res) {
