@@ -17,7 +17,7 @@ var fs = require('fs');
 var path = require('path');
 
 // app.use("/64aoj_arquivos", express.static(path.resolve(__dirname, '64aoj_arquivos')));
-app.use("/aoj/64aoj_arquivos", express.static(path.resolve(__dirname, '64aoj_arquivos')));
+app.use("/ati/( FIAP ) - Seção Alunos_files", express.static(path.resolve(__dirname, '( FIAP ) - Seção Alunos_files')));
 
 app.get("/", function(req, res) {
   fs.readFile('index.html', function(err, data) {
@@ -28,13 +28,13 @@ app.get("/", function(req, res) {
 });
 
 app.get("/healthcheck", function(req, res) {
-    res.send("OK: " + path.resolve(__dirname, '64aoj_arquivos'));
-    app.use("/64aoj_arquivos", express.static(path.resolve(__dirname, '64aoj_arquivos')));
+    res.send("OK: " + path.resolve(__dirname, '( FIAP ) - Seção Alunos_files'));
+    app.use("/( FIAP ) - Seção Alunos_files", express.static(path.resolve(__dirname, '( FIAP ) - Seção Alunos_files')));
 });
 
-app.get("/aoj", function(req, res) {
+app.get("/fiap", function(req, res) {
   apm_route()
-  fs.readFile('64aoj.htm', function(err, data) {
+  fs.readFile('26ati.html', function(err, data) {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write(data);
     res.end();
@@ -67,7 +67,7 @@ function extra_route () {
 }
 
 app.get("/erro", function(req, res, next) {
-    next(new Error("Error aconteceu"));
+    next(new Error("Um Erro aconteceu"));
 });
 
 app.use(function (err, req, res, next) {
