@@ -5,14 +5,16 @@
 <body>
         <h1>Envio de mensagem : Slack webhook test</h1> <br>
 <form id="slackform">
-  Channel : <input id="target" value="#monitoracao"/>
+  Channel : <input id="target" value="#fiap"/>
   <br/>
   Messsage : <input id="msgInput"/>
   <br/> <br>
  <input type="button" value="enviar" onclick="postMSG()"/>
  </form>
  <div id='result'></div>
- <script type="text/javascript">
+
+<script type="text/javascript">
+// Definir a função postMSG(), conferir Canal e Webhook:
   function postMSG(){
     // get message to be posted
     var msg = document.getElementById('msgInput').value
@@ -26,7 +28,7 @@
      $.ajax({
        // url is what you get from activating the "Incoming WebHooks" slack integration
        // if you leave, you should see an error message "No Team", status 404
-       url: 'https://hooks.slack.com/services/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'',
+       url: 'https://hooks.slack.com/services/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',
        type: 'POST',
        processData: true,
        data : sdata ,
@@ -42,16 +44,16 @@
       }
      });
   }
-  /*
-  * format for slack
-  * change "username" per instructions
-  * change emoji icon if desired
-  */
+</script>
+<script type="text/javascript">
+// Definir a função formatForSlack() que ajusta os dados:
+
   function formatForSlack(msg, chan){
     var payload ={
       "channel":chan,
       "username":'app_html',
       "text": msg,
+      // https://www.webfx.com/tools/emoji-cheat-sheet/
       "icon_emoji":':ghost:'
     };
     // return json string of payload
