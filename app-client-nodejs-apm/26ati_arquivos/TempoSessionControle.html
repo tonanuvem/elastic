@@ -1,0 +1,83 @@
+
+<!-- saved from url=(0060)https://www2.fiap.com.br/fiap/login/TempoSessionControle.asp -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+		<title></title>
+		<link href="./css.css" rel="stylesheet" type="text/css">
+	<script language="javascript">
+		<!--
+		var seconds = 30 * 60;
+		var isTempoExpirou = false;
+		var isJanelaAberta2Minuto = false;
+		var isJanelaAberta1Minuto = false;
+		var stColor = "#000000";
+		var obJanela = new Object();
+		
+		var wwidth = 280;
+		var hheight = 115;
+		
+		function fUpdateClock() {
+		
+			seconds = seconds - 1;
+			minutes = Math.floor(seconds / 60);
+			secs = seconds - (minutes * 60);
+			field = document.getElementById("clockBody");
+		
+			if (isTempoExpirou == false){
+				field.innerHTML = '<font  color="' + stColor + '">Sua sessão expira em ' + ((minutes<10)?'0'+String(minutes):minutes) + ':' + ((secs<10)?'0'+String(secs):secs) + '</font>';
+			}
+			
+			if (minutes == 1) {
+	
+				if ( isJanelaAberta2Minuto == false ){
+					obJanela = window.open ('TempoSessionAtualizaMsg2.htm','obJanela','menubar=0,status=1,scrollbars=0,width='+ wwidth +'px,height='+ hheight +'px,top='+ (((screen.height - hheight) / 2) - 80) +',left='+ ((screen.width - wwidth) / 2));
+					obJanela.focus();
+					isJanelaAberta2Minuto = true;
+				}
+				
+			} else if (seconds > 1 && minutes <= 0) {
+			
+				if ( isJanelaAberta1Minuto == false ){
+					obJanela = window.open ('TempoSessionAtualizaMsg1.htm','obJanela','menubar=0,status=1,scrollbars=0,width='+ wwidth +'px,height='+ hheight +'px,top='+ (((screen.height - hheight) / 2) - 80) +',left='+ ((screen.width - wwidth) / 2));
+					obJanela.focus();
+					isJanelaAberta1Minuto = true;
+				}
+				
+				if (stColor == '#000000') {
+					stColor = 'red';		
+				}else{
+					stColor = '#000000';
+				}
+
+			} else if (seconds == 0) {
+				isTempoExpirou = false;
+				try{
+					obJanela.close();
+				}catch(err){
+					
+				}
+				window.location.href = 'sairExpira.asp'
+			}
+			
+			if (seconds > 0) {
+				x = setTimeout('fUpdateClock()', 1000); 
+			}
+			
+		}
+			
+		-->
+	</script></head>
+
+	
+	<body topmargin="0" leftmargin="0" onload="javascript:fUpdateClock();">
+		
+		<table border="0" cellpadding="0" cellspacing="0" style="margin-right:30px;" align="center">
+			<tbody><tr>
+				<td><img src="./bullet_01.gif"></td>
+				<td style="padding-left:5px;"><span id="clockBody" class="texto_secao" style="cursor:pointer;" onclick="javascript: self.location.reload();" title="Clique aqui para atualizar o tempo de sua sessão."><font color="#000000">Sua sessão expira em 28:46</font></span></td>
+				<td style="padding-left:5px;"><span><img src="./trocar.jpg" onclick="javascript: self.location.reload();" style="cursor:pointer;" title="Clique aqui para atualizar o tempo de sua sessão." alt=""></span></td>
+			</tr>
+		</tbody></table>
+
+	
+
+</body></html>
