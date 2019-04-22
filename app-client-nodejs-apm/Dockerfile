@@ -8,6 +8,7 @@ RUN npm install express
 RUN npm install elastic-apm-node
 
 COPY . .
-COPY ./'( FIAP ) - Seção Alunos_files'/* ./'( FIAP ) - Seção Alunos_files'/
+COPY ./26ati_arquivos/* ./26ati_arquivos/
+
 EXPOSE 3000
 CMD [ "npm", "start" ]
