@@ -14,6 +14,6 @@ Os seguintes respositórios serviram de fonte de inspiração:
 
 Ajustes necessários na pasta apm-node :
 
-DockerFile
-Server.js
-Docker-compose.yml
+DockerFile;
+Server.js;
+Docker-compose.yml;
