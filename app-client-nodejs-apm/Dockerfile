@@ -8,7 +8,7 @@ RUN npm install express
 RUN npm install elastic-apm-node
 
 COPY . .
-COPY ./26ati_arquivos/* ./26ati_arquivos/
+COPY ./18cld_arquivos/* ./18cld_arquivos/
 
 EXPOSE 3000
 CMD [ "npm", "start" ]
