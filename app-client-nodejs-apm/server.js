@@ -16,7 +16,7 @@ var app = express();
 var fs = require('fs');
 var path = require('path');
 
-app.use("/fiap/18cld_arquivos", express.static(path.resolve(__dirname, '18cld_arquivos')));
+app.use("/fiap/shift", express.static(path.resolve(__dirname, 'shift')));
 //app.use("/26ati_arquivos", express.static(path.resolve(__dirname, '26ati_arquivos')));
 
 app.get("/", function(req, res) {
@@ -28,13 +28,13 @@ app.get("/", function(req, res) {
 });
 
 app.get("/healthcheck", function(req, res) {
-    res.send("OK: " + path.resolve(__dirname, '18cld_arquivos'));
-    app.use("/18cld_arquivos", express.static(path.resolve(__dirname, '18cld_arquivos')));
+    res.send("OK: " + path.resolve(__dirname, 'shift'));
+    app.use("/shift", express.static(path.resolve(__dirname, 'shift')));
 });
 
 app.get("/fiap", function(req, res) {
   apm_route()
-  fs.readFile('18cld.htm', function(err, data) {
+  fs.readFile('shift.html', function(err, data) {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write(data);
     res.end();
