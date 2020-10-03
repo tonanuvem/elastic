@@ -1,10 +1,13 @@
 'use strict'
 
+var APM = process.env.APM ? process.env.APM : "apm-server"
+
 var apm = require('elastic-apm-node').start({
   frameworkName: 'express',
   frameworkVersion: 'unknown',
   serviceName: 'aplicacao-fiap-nodejs-v2',
-  serverUrl: 'http://apm-server:8200',
+//  serverUrl: 'http://apm-server:8200',
+  serverUrl: 'http://'+APM+':8200',
   flushInterval: 1,
   maxQueueSize: 1,
   apiRequestTime: "50ms",
