@@ -1,5 +1,6 @@
 'use strict'
 
+// Verifica se há variável de ambiente 
 var APM = process.env.APM ? process.env.APM : "apm-server"
 
 var apm = require('elastic-apm-node').start({
