@@ -34,7 +34,7 @@ services:
       - elasticsearch
 
   app-client-apm-nodejs:
-#    image: tonanuvem/app-client-apm-nodejs:18cld
+#    image: tonanuvem/app-client-apm-nodejs
     build:
       context: app-client-nodejs-apm/
     container_name: app-client-apm-nodejs
