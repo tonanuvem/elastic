@@ -1,0 +1,69 @@
+version: '3'
+services:
+  elasticsearch:
+    image: elasticsearch:6.5.1
+    container_name: elasticsearch
+    environment:
+      - "http.host=0.0.0.0"
+      - "transport.host=127.0.0.1"
+      - "ES_JAVA_OPTS=-Xmx256m -Xms256m"
+      - "ELASTIC_PASSWORD=changeme"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    networks:
+      - elk
+
+  kibana:
+    image: kibana:6.5.1
+    container_name: kibana
+    ports:
+      - 5601:5601
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  apm-server:
+    image: elastic/apm-server:6.5.1
+    container_name: apm-server
+    ports:
+      - 8200:8200
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  app-client-apm-nodejs:
+#    image: tonanuvem/app-client-apm-nodejs
+    build:
+      context: app-client-nodejs-apm/
+    container_name: app-client-apm-nodejs
+    ports:
+      - 3000:3000
+    networks:
+      - elk
+    depends_on:
+      - apm-server
+
+  beats:
+    image: docker.elastic.co/beats/metricbeat:6.5.2
+    command:
+      - "-system.hostfs=/hostfs"
+    container_name: beats
+    user: root
+    volumes:
+#      - ./metricbeat.docker.yml:/usr/share/metricbeat/metricbeat.yml
+      - /proc:/hostfs/proc:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /:/hostfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+volumes:
+  esdata:
+
+networks:
+  elk:
