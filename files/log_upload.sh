@@ -111,9 +111,8 @@ curl -X PUT "localhost:9200/_ingest/pipeline/${INDEX_NAME}-pipeline?pretty" -H '
 }'
 
 
+printf "\n== Uploading data to index... \n"
 curl -s -u ${USERNAME}:${PASSWORD} -X POST -H "Content-Type: application/json" ${URL}/${INDEX_NAME}/ --data-binary ${LOG_FILE} > /dev/null
-
-#printf "\n== Bulk uploading data to index... \n"
 #for i in `seq 1 20`;
 #do
 #    curl -s -u ${USERNAME}:${PASSWORD} -X POST -H "Content-Type: application/json" ${URL}/${INDEX_NAME}/_bulk --data-binary "@server-metrics_${i}.json" > /dev/null
