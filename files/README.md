@@ -26,6 +26,10 @@ O log de firewall que foi gravado de uma máquina virtual criada na digital ocea
 
 - https://www.elastic.co/pt/blog/machine-learning-for-nginx-logs
 
+## Logstash parse log example:
+
+- https://coralogix.com/log-analytics-blog/logstash-grok-tutorial-with-examples/
+
 ## Configs
 
 ### Config: "Override settings"
