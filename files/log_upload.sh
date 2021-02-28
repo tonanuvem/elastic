@@ -35,62 +35,8 @@ curl -s  -u ${USERNAME}:${PASSWORD} -X PUT -H 'Content-Type: application/json' $
         },
         "geoip": {
           "properties": {
-            "city_name": {
-              "type": "text",
-              "fields": {
-                "keyword": {
-                  "type": "keyword",
-                  "ignore_above": 256
-                }
-              }
-            },
-            "continent_name": {
-              "type": "text",
-              "fields": {
-                "keyword": {
-                  "type": "keyword",
-                  "ignore_above": 256
-                }
-              }
-            },
-            "country_iso_code": {
-              "type": "text",
-              "fields": {
-                "keyword": {
-                  "type": "keyword",
-                  "ignore_above": 256
-                }
-              }
-            },
-            "country_name": {
-              "type": "text",
-              "fields": {
-                "keyword": {
-                  "type": "keyword",
-                  "ignore_above": 256
-                }
-              }
-            },
             "location": {
               "type": "geo_point"
-            },
-            "region_iso_code": {
-              "type": "text",
-              "fields": {
-                "keyword": {
-                  "type": "keyword",
-                  "ignore_above": 256
-                }
-              }
-            },
-            "region_name": {
-              "type": "text",
-              "fields": {
-                "keyword": {
-                  "type": "keyword",
-                  "ignore_above": 256
-                }
-              }
             }
         },
         "in": {
