@@ -1,0 +1,117 @@
+version: '3'
+services:
+
+  elasticsearch:
+    image: elasticsearch:7.10.1
+    container_name: elasticsearch
+    environment:
+      - "http.host=0.0.0.0"
+      - "transport.host=127.0.0.1"
+      - "ES_JAVA_OPTS=-Xmx256m -Xms256m"
+      - "ELASTIC_PASSWORD=changeme"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+      - ./files:/usr/share/elasticsearch/files
+    networks:
+      - elk
+
+  kibana:
+    image: kibana:7.10.1
+    container_name: kibana
+    ports:
+      - 5601:5601
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  apm-server:
+    image: elastic/apm-server:7.10.1
+    container_name: apm-server
+    ports:
+      - 8200:8200
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  app-client-apm-nodejs:
+#    image: tonanuvem/app-client-apm-nodejs
+    build:
+      context: app-client-nodejs-apm/
+    container_name: app-client-apm-nodejs
+    ports:
+      - 3000:3000
+    networks:
+      - elk
+    depends_on:
+      - apm-server
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.10.1
+    environment:
+      - XPACK_MONITORING_ELASTICSEARCH_URL=http://elasticsearch:9200
+      - XPACK_MONITORING_ELASTICSEARCH_USERNAME=elastic
+      - XPACK_MONITORING_ELASTICSEARCH_PASSWORD=changeme
+    ports:
+      - "12201:12201/udp"
+    networks:
+      - elk
+    volumes:
+      - ./configs/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    depends_on:
+      - elasticsearch
+
+
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:7.10.1
+    command:
+      - "-system.hostfs=/hostfs"
+    container_name: beats
+    user: root
+    volumes:
+      - ./configs/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml
+      - /proc:/hostfs/proc:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /:/hostfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.10.1
+    # Need to override user so we can access the log files, and docker.sock
+    user: root
+    networks:
+      - elk
+    volumes:
+      - filebeat:/usr/share/filebeat/data
+      - ./configs/filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - /var/run/docker.sock:/var/run/docker.sock
+      # This is needed for filebeat to load container log path as specified in filebeat.yml
+      - /var/lib/docker/containers/:/var/lib/docker/containers/:ro
+
+      # # This is needed for filebeat to load jenkins build log path as specified in filebeat.yml
+      # - /var/lib/docker/volumes/jenkins_home/_data/jobs/:/var/lib/docker/volumes/jenkins_home/_data/jobs/:ro
+
+      # This is needed for filebeat to load logs for system and auth modules
+      - /var/log/:/var/log/:ro
+      # This is needed for filebeat to load logs for auditd module. you might have to install audit system
+      # on ubuntu first (sudo apt-get install -y auditd audispd-plugins)
+      - /var/log/audit/:/var/log/audit/:ro
+    environment:
+      - ELASTICSEARCH_HOST=${ELASTICSEARCH_HOST:-node1}
+      - KIBANA_HOST=${KIBANA_HOST:-node1}
+      - ELASTICSEARCH_USERNAME=${ELASTICSEARCH_USERNAME:-elastic}
+      - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD:-changeme}
+    # disable strict permission checks
+    command: ["--strict.perms=false"]
+
+volumes:
+  esdata:
+  filebeat:
+
+networks:
+  elk:
