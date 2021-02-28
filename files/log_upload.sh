@@ -9,9 +9,11 @@ LOG_FILE='ufw.log'
 URL="http://${HOST}:${PORT}"
 USERNAME=elastic
 PASSWORD=changeme
+
 printf "\n== Script for creating index and uploading data == \n \n"
-printf "\n== Deleting old index == \n\n"
-curl -s -u ${USERNAME}:${PASSWORD} -X DELETE ${URL}/${INDEX_NAME}
+
+#printf "\n== Deleting old index == \n\n"
+#curl -s -u ${USERNAME}:${PASSWORD} -X DELETE ${URL}/${INDEX_NAME}
 
 printf "\n== Creating Index - ${INDEX_NAME} == \n\n"
 curl -s  -u ${USERNAME}:${PASSWORD} -X PUT -H 'Content-Type: application/json' ${URL}/${INDEX_NAME} -d '{  
@@ -32,12 +34,6 @@ curl -s  -u ${USERNAME}:${PASSWORD} -X PUT -H 'Content-Type: application/json' $
         },
         "destination_port": {
           "type": "long"
-        },
-        "geoip": {
-          "properties": {
-            "location": {
-              "type": "geo_point"
-            }
         },
         "in": {
           "type": "keyword"
@@ -65,7 +61,12 @@ curl -s  -u ${USERNAME}:${PASSWORD} -X PUT -H 'Content-Type: application/json' $
         },
         "source_port": {
           "type": "long"
-        }
+        },
+        "geoip": {
+          "properties": {
+            "location": { "type": "geo_point" }
+          }
+        }        
       }
     }
   }
