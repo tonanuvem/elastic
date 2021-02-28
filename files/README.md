@@ -1,6 +1,6 @@
 # Diretorio com arquivos usados em outros labs.
 
-## Envio do arquivos.
+## Branch com os diversos arquivos.
 
 git checkout files
 
