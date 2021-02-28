@@ -19,7 +19,8 @@ printf "\n== Creating Index - ${INDEX_NAME} == \n\n"
 curl -s  -u ${USERNAME}:${PASSWORD} -X PUT -H 'Content-Type: application/json' ${URL}/${INDEX_NAME} -d '{  
   "settings":{  
       "number_of_shards":1,
-      "number_of_replicas":0
+      "number_of_replicas":0,
+      "default_pipeline" : ${INDEX_NAME}-pipeline
   },
   "mappings": {
       "properties": {
