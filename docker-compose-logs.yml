@@ -88,6 +88,7 @@ services:
       - elk
     volumes:
       - filebeat:/usr/share/filebeat/data
+      - ./files/ufw.log:/usr/tmp/ufw.log
       - ./configs/filebeat.yml:/usr/share/filebeat/filebeat.yml
       - /var/run/docker.sock:/var/run/docker.sock
       # This is needed for filebeat to load container log path as specified in filebeat.yml
