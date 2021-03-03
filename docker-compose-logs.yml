@@ -79,6 +79,11 @@ services:
       - elk
     depends_on:
       - elasticsearch
+    environment:
+      - ELASTICSEARCH_HOST=elasticsearch
+      - KIBANA_HOST=kibana
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=changeme
 
   filebeat:
     image: docker.elastic.co/beats/filebeat:7.10.1
