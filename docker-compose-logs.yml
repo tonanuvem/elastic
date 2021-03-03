@@ -114,6 +114,7 @@ services:
       - ELASTICSEARCH_PASSWORD=changeme
     # disable strict permission checks
     command: ["--strict.perms=false"]
+    restart: always
     depends_on:
       - kibana
 
