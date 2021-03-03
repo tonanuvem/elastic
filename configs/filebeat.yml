@@ -36,23 +36,24 @@ filebeat.autodiscover:
       hints.enabled: true
 
 #================================ Processors ===================================
-processors:
-- add_cloud_metadata: ~
-- add_docker_metadata: ~
-- add_locale:
-    format: offset
-- add_host_metadata:
-    netinfo.enabled: true
+#processors:
+#- add_cloud_metadata: ~
+#- add_docker_metadata: ~
+#- add_locale:
+#    format: offset
+#- add_host_metadata:
+#    netinfo.enabled: true
 
 #========================== Elasticsearch output ===============================
 output.elasticsearch:
   hosts: ["${ELASTICSEARCH_HOST}:9200"]
   username: ${ELASTICSEARCH_USERNAME}
   password: ${ELASTICSEARCH_PASSWORD}
+  pipeline: "test-pipeline"
 
 #============================== Dashboards =====================================
-setup.dashboards:
-  enabled: true
+#setup.dashboards:
+#  enabled: true
 
 #============================== Kibana =========================================
 setup.kibana:
