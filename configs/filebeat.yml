@@ -24,6 +24,7 @@ filebeat.inputs:
 - type: log
   paths:
     - /usr/tmp/*.log
+    - /var/log/*.log
  
 #========================== Filebeat autodiscover ==============================
 # See this URL on how to run Apache2 Filebeat module: # https://www.elastic.co/guide/en/beats/filebeat/current/running-on-docker.html
