@@ -40,7 +40,7 @@ services:
       context: app-client-nodejs-apm/
     container_name: app-client-apm-nodejs
     ports:
-      - 3000:3000
+      - 3001:3000
     networks:
       - elk
     depends_on:
