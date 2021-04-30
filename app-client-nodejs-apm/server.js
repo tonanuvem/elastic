@@ -36,18 +36,12 @@ app.get("/healthcheck", function(req, res) {
 });
 
 app.get("/fiap", function(req, res) {
-  apm_route()
   fs.readFile('fiap.htm', function(err, data) {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write(data);
     res.end();
   });
 });
-
-function apm_route () {
-    var span = apm.startSpan('app.fiap', 'custom')
-    span.end()
-}
 
 app.get("/bar", function(req, res) {
   bar_route()
@@ -75,7 +69,7 @@ app.get("/erro", function(req, res, next) {
 
 app.use(function (err, req, res, next) {
   console.error(err.stack)
-  res.status(500).send('Something broke!')
+  res.status(500).send('EITAAAA.... DEU RUIM!')
 });
 
 var server = app.listen('3000', '0.0.0.0', function () {
