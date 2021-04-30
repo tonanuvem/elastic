@@ -1,7 +1,7 @@
 version: '3'
 services:
   elasticsearch:
-    image: elasticsearch:7.10.1
+    image: elasticsearch:7.12.1
     container_name: elasticsearch
     environment:
       - "http.host=0.0.0.0"
@@ -15,7 +15,7 @@ services:
       - elk
 
   kibana:
-    image: kibana:7.10.1
+    image: kibana:7.12.1
     container_name: kibana
     ports:
       - 5601:5601
@@ -25,7 +25,7 @@ services:
       - elasticsearch
 
   apm-server:
-    image: elastic/apm-server:7.10.1
+    image: elastic/apm-server:7.12.1
     container_name: apm-server
     ports:
       - 8200:8200
@@ -47,7 +47,7 @@ services:
       - apm-server
 
   beats:
-    image: docker.elastic.co/beats/metricbeat:7.10.1
+    image: docker.elastic.co/beats/metricbeat:7.12.1
     command:
       - "-system.hostfs=/hostfs"
     container_name: beats
