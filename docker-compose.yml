@@ -48,8 +48,8 @@ services:
 
   beats:
     image: docker.elastic.co/beats/metricbeat:7.12.1
-    command:
-      - "-system.hostfs=/hostfs"
+    command: metricbeat -e -system.hostfs=/hostfs -strict.perms=false
+    #  - "-system.hostfs=/hostfs"
     container_name: beats
     user: root
     volumes:
