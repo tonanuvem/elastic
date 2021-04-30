@@ -53,7 +53,7 @@ services:
     container_name: beats
     user: root
     volumes:
-#      - ./metricbeat.docker.yml:/usr/share/metricbeat/metricbeat.yml
+      - ./metricbeat.docker.yml:/usr/share/metricbeat/metricbeat.yml
       - /proc:/hostfs/proc:ro
       - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
       - /:/hostfs:ro
@@ -62,6 +62,7 @@ services:
       - elk
     depends_on:
       - elasticsearch
+      - kibana
 
 volumes:
   esdata:
