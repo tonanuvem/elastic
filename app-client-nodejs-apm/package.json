@@ -9,6 +9,6 @@
   },
   "dependencies": {
     "express": "^4.16.1",
-    "elastic-apm-node": ">=3.14.0"
+    "elastic-apm-node": "3.13.0"
   }
 }
