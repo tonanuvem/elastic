@@ -1,6 +1,6 @@
 Diretorio com arquivos usados em outros labs.
 
-Exemplo do arquivo : **exemplo_firewall.log**:
+Arquivo : **exemplo_firewall.log**:
 
 ```scala
 Feb 12 22:07:43 honeypot kernel: [  532.791805] [UFW BLOCK] IN=eth0 OUT= MAC=ea:60:f1:13:70:b1:f0:4b:3a:4e:48:30:08:00 SRC=66.240.219.146 DST=104.248.50.195 LEN=44 TOS=0x10 PREC=0x00 TTL=115 ID=40012 PROTO=TCP SPT=23320 DPT=9943 WINDOW=62319 RES=0x00 SYN URGP=0 
