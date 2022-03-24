@@ -8,6 +8,7 @@ services:
       - "transport.host=127.0.0.1"
       - "ES_JAVA_OPTS=-Xmx256m -Xms256m"
       - "ELASTIC_PASSWORD=changeme"
+      - xpack.security.enabled=false
     volumes:
       - esdata:/usr/share/elasticsearch/data
       - ./files:/usr/share/elasticsearch/files
