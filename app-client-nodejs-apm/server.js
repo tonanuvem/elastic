@@ -20,7 +20,8 @@ const winston = require('winston')
 const ecsFormat = require('@elastic/ecs-winston-format')
 
 const logger = winston.createLogger({
-  level: 'debug',
+  //level: 'debug',
+  level: 'info',
   format: ecsFormat({ convertReqRes: true }),
   transports: [
     new winston.transports.Console(),
