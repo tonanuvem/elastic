@@ -46,7 +46,7 @@ services:
     depends_on:
       - apm-server
 
-  beats:
+  metricbeat:
     image: docker.elastic.co/beats/metricbeat:8.1.1
     command: metricbeat -e -system.hostfs=/hostfs -strict.perms=false
     container_name: beats
