@@ -15,6 +15,23 @@ var apm = require('elastic-apm-node').start({
 //  ignoreUrls: ['/healthcheck']
 })
 
+
+const winston = require('winston')
+const ecsFormat = require('@elastic/ecs-winston-format')
+
+const logger = winston.createLogger({
+  level: 'debug',
+  format: ecsFormat({ convertReqRes: true }),
+  transports: [
+    //new winston.transports.Console(),
+    new winston.transports.File({
+      //path to log file
+      filename: 'logs/log.json',
+      level: 'debug'
+    })
+  ]
+})
+
 var express = require('express');
 var app = express();
 var fs = require('fs');
@@ -33,9 +50,11 @@ app.get("/", function(req, res) {
 app.get("/healthcheck", function(req, res) {
     res.send("OK: " + path.resolve(__dirname, 'shift'));
     app.use("/shift", express.static(path.resolve(__dirname, 'shift')));
+    logger.info('healthcheck: Solicitação de saúde da aplicação', { req, res })
 });
 
 app.get("/fiap", function(req, res) {
+  logger.info('fiap: Solicitação de página sobre kahoot', { req, res })
   fs.readFile('fiap.htm', function(err, data) {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write(data);
@@ -44,6 +63,7 @@ app.get("/fiap", function(req, res) {
 });
 
 app.get("/bar", function(req, res) {
+  logger.info('bar: Solicitação de página bar', { req, res })
   bar_route()
   fs.readFile('bar.html', function(err, data) {
     res.writeHead(200, {'Content-Type': 'text/html'});
@@ -53,17 +73,20 @@ app.get("/bar", function(req, res) {
 });
 
 function bar_route () {
+    logger.info('subbar: Solicitação de página subbar', { req, res })
     var span = apm.startSpan('app.bar.Cerveja_acabou', 'custom')
     extra_route()
     span.end()
 }
 
 function extra_route () {
+    logger.info('subsubbar: Solicitação de página subsubbar', { req, res })
     var span = apm.startSpan('app.extra.pegar_no_Vizinho', 'custom')
     span.end()
 }
 
 app.get("/erro", function(req, res, next) {
+    logger.info('ERRO: aconteceu algo inesperado', { req, res })
     next(new Error("Um Erro aconteceu"));
 });
 
@@ -73,5 +96,5 @@ app.use(function (err, req, res, next) {
 });
 
 var server = app.listen('3000', '0.0.0.0', function () {
-    console.log("Listening on %s...", server.address().port);
-});
+    logger.info("Listening on %s...", server.address().port);
+}
