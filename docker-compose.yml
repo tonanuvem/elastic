@@ -83,7 +83,7 @@ services:
     user: root
     networks:
       - elk
-    user: root
+    restart: always
     volumes:
       - filebeat:/usr/share/filebeat/data
       - ./configs/filebeat.yml:/usr/share/filebeat/filebeat.yml
