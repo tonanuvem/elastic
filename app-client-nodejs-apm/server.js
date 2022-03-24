@@ -97,5 +97,5 @@ app.use(function (err, req, res, next) {
 });
 
 var server = app.listen('3000', '0.0.0.0', function () {
-    logger.info("Listening on %s...", server.address().port);
+    logger.info("Started app fiap");
 });
