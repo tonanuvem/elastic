@@ -1,5 +1,6 @@
 version: '3'
 services:
+  # https://www.elastic.co/guide/en/elasticsearch/reference/8.1/docker.html#elasticsearch-security-certificates
   elasticsearch:
     image: elasticsearch:8.1.1
     container_name: elasticsearch
