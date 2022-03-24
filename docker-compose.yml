@@ -62,7 +62,7 @@ services:
     #image: docker.elastic.co/beats/metricbeat:8.1.1
     image: docker.elastic.co/beats/metricbeat:7.12.1
     command: metricbeat -e -system.hostfs=/hostfs -strict.perms=false
-    container_name: beats
+    container_name: metricbeat
     user: root
     volumes:
       - ./metricbeat.docker.yml:/usr/share/metricbeat/metricbeat.yml
@@ -79,6 +79,7 @@ services:
   filebeat:
     #image: docker.elastic.co/beats/filebeat:8.1.1
     image: docker.elastic.co/beats/filebeat:7.12.1
+    container_name: filebeat
     # Need to override user so we can access the log files, and docker.sock
     user: root
     networks:
