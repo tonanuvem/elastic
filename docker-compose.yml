@@ -64,7 +64,7 @@ services:
       - kibana
 
   filebeat:
-    image: docker.elastic.co/beats/filebeat:8.11.1
+    image: docker.elastic.co/beats/filebeat:8.1.1
     # Need to override user so we can access the log files, and docker.sock
     user: root
     networks:
