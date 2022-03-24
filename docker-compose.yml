@@ -93,6 +93,7 @@ services:
     command: ["--strict.perms=false"]
     depends_on:
       - elasticsearch
+      - kibana
       
 volumes:
   esdata:
