@@ -56,7 +56,7 @@ output.elasticsearch:
 
 #============================== Dashboards =====================================
 setup.dashboards:
-  #enabled: true
+  enabled: true
   index: "filebeat-*"
   always_kibana: true
   retry.enabled: true
