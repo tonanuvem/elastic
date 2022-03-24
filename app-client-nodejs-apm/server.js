@@ -87,7 +87,7 @@ function extra_route () {
 }
 
 app.get("/erro", function(req, res, next) {
-    logger.info('ERRO: aconteceu algo inesperado', { req, res })
+    logger.error('ERRO: aconteceu algo inesperado', { req, res })
     next(new Error("Um Erro aconteceu"));
 });
 
