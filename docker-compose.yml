@@ -10,6 +10,7 @@ services:
       - "ES_JAVA_OPTS=-Xmx256m -Xms256m"
       - "ELASTIC_PASSWORD=changeme"
       - "xpack.security.enabled=false"
+      - "xpack.security.authc.token.enabled=false"
     volumes:
       - esdata:/usr/share/elasticsearch/data
       - ./files:/usr/share/elasticsearch/files
