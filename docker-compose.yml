@@ -91,7 +91,9 @@ services:
       - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD:-changeme}
     # disable strict permission checks
     command: ["--strict.perms=false"]
-    
+    depends_on:
+      - elasticsearch
+      
 volumes:
   esdata:
   filebeat:
