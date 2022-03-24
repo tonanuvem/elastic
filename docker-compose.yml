@@ -19,6 +19,8 @@ services:
     container_name: kibana
     ports:
       - 5601:5601
+    environment:
+      - "KIBANA_PASSWORD=changeme"
     networks:
       - elk
     depends_on:
