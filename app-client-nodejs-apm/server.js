@@ -73,14 +73,14 @@ app.get("/bar", function(req, res) {
 });
 
 function bar_route () {
-    logger.info('subbar: Solicitação de página subbar', { req, res })
+    //logger.info('subbar: Solicitação de página subbar', { req, res })
     var span = apm.startSpan('app.bar.Cerveja_acabou', 'custom')
     extra_route()
     span.end()
 }
 
 function extra_route () {
-    logger.info('subsubbar: Solicitação de página subsubbar', { req, res })
+    //logger.info('subsubbar: Solicitação de página subsubbar', { req, res })
     var span = apm.startSpan('app.extra.pegar_no_Vizinho', 'custom')
     span.end()
 }
