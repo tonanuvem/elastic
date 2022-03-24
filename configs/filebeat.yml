@@ -19,6 +19,16 @@ filebeat.modules:
 #  paths:
 #    -/var/lib/docker/containers/*/*.log
 #  stream: all # can be all, stdout or stderr
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+    -/usr/src/app/logs/log.json
+  stream: all # can be all, stdout or stderr
+  json.keys_under_root: true
+  json.overwrite_keys: true
+  json.add_error_key: true
+  json.expand_keys: true
 
 #========================== Filebeat autodiscover ==============================
 # See this URL on how to run Apache2 Filebeat module: # https://www.elastic.co/guide/en/beats/filebeat/current/running-on-docker.html
