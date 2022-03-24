@@ -23,6 +23,8 @@ services:
     environment:
       - "KIBANA_PASSWORD=changeme"
       - "xpack.security.authc.http.enabled=false"
+      - "ELASTICSEARCH_USERNAME=elastic"
+      - "ELASTICSEARCH_PASSWORD=changeme"
     networks:
       - elk
     depends_on:
