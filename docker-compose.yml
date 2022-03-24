@@ -83,6 +83,7 @@ services:
     user: root
     networks:
       - elk
+    user: root
     volumes:
       - filebeat:/usr/share/filebeat/data
       - ./configs/filebeat.yml:/usr/share/filebeat/filebeat.yml
@@ -100,7 +101,9 @@ services:
       - /var/log/audit/:/var/log/audit/:ro
     environment:
       - ELASTICSEARCH_HOST=elasticsearch
+      - ELASTICSEARCH_PORT=9200
       - KIBANA_HOST=kibana
+      - KIBANA_PORT=5601
       - ELASTICSEARCH_USERNAME=elastic
       - ELASTICSEARCH_PASSWORD=changeme
     # disable strict permission checks
