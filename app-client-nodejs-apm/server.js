@@ -74,14 +74,14 @@ app.get("/bar", function(req, res) {
 });
 
 function bar_route () {
-    logger.info('fiap bar rota: Solicitação de rota para o bar', { req, res })
+    logger.info('fiap bar rota: Solicitação de rota para o bar')
     var span = apm.startSpan('app.bar.Cerveja_acabou', 'custom')
     extra_route()
     span.end()
 }
 
 function extra_route () {
-    logger.info('fiap bar rota extra: Solicitação de rota extra para o bar', { req, res })
+    logger.info('fiap bar rota extra: Solicitação de rota extra para o bar')
     var span = apm.startSpan('app.extra.pegar_no_Vizinho', 'custom')
     span.end()
 }
