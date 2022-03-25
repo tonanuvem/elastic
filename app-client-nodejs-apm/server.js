@@ -51,11 +51,11 @@ app.get("/", function(req, res) {
 app.get("/healthcheck", function(req, res) {
     res.send("OK: " + path.resolve(__dirname, 'shift'));
     app.use("/shift", express.static(path.resolve(__dirname, 'shift')));
-    logger.info('healthcheck: Solicitação de saúde da aplicação', { req, res })
+    logger.info('fiap healthcheck: Solicitação de saúde da aplicação', { req, res })
 });
 
 app.get("/fiap", function(req, res) {
-  logger.info('fiap: Solicitação de página sobre kahoot', { req, res })
+  logger.info('fiap endpoint: Solicitação de página sobre kahoot', { req, res })
   fs.readFile('fiap.htm', function(err, data) {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write(data);
@@ -64,7 +64,7 @@ app.get("/fiap", function(req, res) {
 });
 
 app.get("/bar", function(req, res) {
-  logger.info('bar: Solicitação de página bar', { req, res })
+  logger.info('fiap bar: Solicitação de bebida na página bar', { req, res })
   bar_route()
   fs.readFile('bar.html', function(err, data) {
     res.writeHead(200, {'Content-Type': 'text/html'});
@@ -74,14 +74,14 @@ app.get("/bar", function(req, res) {
 });
 
 function bar_route () {
-    //logger.info('subbar: Solicitação de página subbar', { req, res })
+    logger.info('fiap bar rota: Solicitação de rota para o bar', { req, res })
     var span = apm.startSpan('app.bar.Cerveja_acabou', 'custom')
     extra_route()
     span.end()
 }
 
 function extra_route () {
-    //logger.info('subsubbar: Solicitação de página subsubbar', { req, res })
+    logger.info('fiap bar rota extra: Solicitação de rota extra para o bar', { req, res })
     var span = apm.startSpan('app.extra.pegar_no_Vizinho', 'custom')
     span.end()
 }
