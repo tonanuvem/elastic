@@ -8,5 +8,4 @@ WORKDIR /usr/share/elasticsearch/aiops
 ADD https://download.elastic.co/demos/machine_learning/gettingstarted/server_metrics.tar.gz .
 RUN tar -zxvf server_metrics.tar.gz
 
-WORKDIR /usr/share/elasticsearch/aiops/files
-RUN upload_server_metrics.sh
+RUN /usr/share/elasticsearch/aiops/files/upload_server_metrics.sh
