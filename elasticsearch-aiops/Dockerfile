@@ -1,3 +1,6 @@
+# The upstream image was built by:
+#   https://github.com/elastic/dockerfiles/tree/v7.12.1/elasticsearch
+
 FROM elasticsearch:7.12.1
 
 WORKDIR /usr/share/elasticsearch
