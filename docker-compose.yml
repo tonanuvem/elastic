@@ -1,7 +1,9 @@
 version: '3'
 services:
   elasticsearch:
-    image: elasticsearch:7.12.1
+    #image: elasticsearch:7.12.1
+    build:
+      context: elasticsearch-aiops/
     container_name: elasticsearch
     environment:
       - "http.host=0.0.0.0"
@@ -23,28 +25,6 @@ services:
       - elk
     depends_on:
       - elasticsearch
-
-  apm-server:
-    image: elastic/apm-server:7.12.1
-    container_name: apm-server
-    ports:
-      - 8200:8200
-    networks:
-      - elk
-    depends_on:
-      - elasticsearch
-
-  app-client-apm-nodejs:
-    #image: tonanuvem/app-client-apm-nodejs
-    build:
-      context: app-client-nodejs-apm/
-    container_name: app-client-apm-nodejs
-    ports:
-      - 3001:3000
-    networks:
-      - elk
-    depends_on:
-      - apm-server
 
   beats:
     image: docker.elastic.co/beats/metricbeat:7.12.1
