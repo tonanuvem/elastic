@@ -1,6 +1,8 @@
 #!/bin/bash
 
 echo "Executando Elastic stack para análise dos dados"
+echo ""
+echo ""
 
 # Start up all services
 docker-compose up -d
