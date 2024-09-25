@@ -10,7 +10,7 @@ docker-compose up -d
 IP=$(curl checkip.amazonaws.com)
 
 echo ""
-echo "URL de acesso: Aplicação Node.js"
+echo "URL de acesso: Aplicacao-fiap-nodejs-v2"
 echo ""
 echo http://$(curl -s checkip.amazonaws.com):3001
 echo ""
