@@ -12,7 +12,7 @@ IP=$(curl checkip.amazonaws.com)
 echo ""
 echo "URL de acesso: Aplicação Node.js"
 echo ""
-echo http://$(curl -s checkip.amazonaws.com):3000
+echo http://$(curl -s checkip.amazonaws.com):3001
 echo ""
 echo ""
 echo ""
