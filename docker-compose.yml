@@ -1,4 +1,4 @@
-version: '3'
+#version: '3'
 services:
   # https://www.elastic.co/guide/en/elasticsearch/reference/8.1/docker.html#elasticsearch-security-certificates
   elasticsearch:
@@ -69,9 +69,9 @@ services:
       co.elastic.logs/json.expand_keys: true
       co.elastic.logs/fileset.stdout: access
       co.elastic.logs/fileset.stderr: error
-    #image: tonanuvem/app-client-apm-nodejs
-    build:
-      context: app-client-nodejs-apm/
+    image: tonanuvem/app-client-apm-nodejs
+    #build:
+    #  context: app-client-nodejs-apm/
     container_name: app-client-apm-nodejs
     ports:
       - 3001:3000
