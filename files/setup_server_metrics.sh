@@ -30,6 +30,12 @@ if [[ -z "$INDEX_LINE" ]]; then
   exit 1
 fi
 
+echo "🐳 Verificando upload dentro do container..."
+docker exec -it $CONTAINER_NAME bash -c "
+  cd files/files && \
+  sh ./upload_server_metrics.sh
+"
+
 echo "✅ Índice encontrado:"
 echo "$INDEX_LINE"
 
