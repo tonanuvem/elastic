@@ -6,7 +6,7 @@ CONTAINER_NAME="elasticsearch"
 INDEX_NAME="server-metrics"
 
 echo "📥 Baixando arquivos de métricas..."
-wget https://download.elastic.co/demos/machine_learning/gettingstarted/server_metrics.tar.gz
+# wget https://download.elastic.co/demos/machine_learning/gettingstarted/server_metrics.tar.gz
 
 echo "📦 Extraindo arquivos..."
 tar -zxvf server_metrics.tar.gz
