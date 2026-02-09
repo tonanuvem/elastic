@@ -1,3 +1,4 @@
+# FROM node:22
 FROM node:13
 
 WORKDIR /usr/src/app
