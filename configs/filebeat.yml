@@ -20,11 +20,10 @@ filebeat.modules:
 #    -/var/lib/docker/containers/*/*.log
 #  stream: all # can be all, stdout or stderr
 filebeat.inputs:
-- type: log
+- type: container
   enabled: true
   paths:
-    -/usr/src/app/logs/log.json
-  stream: all # can be all, stdout or stderr
+    - /var/lib/docker/containers/*/*.log
   json.keys_under_root: true
   json.overwrite_keys: true
   json.add_error_key: true
@@ -51,23 +50,19 @@ processors:
 #========================== Elasticsearch output ===============================
 output.elasticsearch:
   hosts: ["elasticsearch:9200"]
-  username: elastic
-  password: changeme
 
 #============================== Dashboards =====================================
-setup.dashboards:
-  enabled: true
-  index: "filebeat-*"
-  always_kibana: true
-  retry.enabled: true
+#setup.dashboards:
+#  enabled: true
+#  index: "filebeat-*"
+#  always_kibana: true
+#  retry.enabled: true
 
 #============================== Kibana =========================================
-setup.kibana:
-  host: "kibana:5601"
-  username: elastic
-  password: changeme
+#setup.kibana:
+#  host: "kibana:5601"
 
 #============================== Xpack Monitoring ===============================
-xpack.monitoring:
-  enabled: true
-  elasticsearch:
+#xpack.monitoring:
+#  enabled: true
+#  elasticsearch:

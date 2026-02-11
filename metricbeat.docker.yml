@@ -24,8 +24,6 @@ processors:
 
 output.elasticsearch:
   hosts: elasticsearch:9200
-  username: "elastic"
-  password: "changeme"
 
-setup.kibana:
-  host: "kibana:5601"
+#setup.kibana:
+#  host: "kibana:5601"

@@ -8,7 +8,7 @@ services:
       co.elastic.logs/json.add_error_key: true
       co.elastic.logs/json.expand_keys: true
     #image: elasticsearch:8.1.1
-    image: elasticsearch:7.12.1
+    image: elasticsearch:8.19.11
     container_name: elasticsearch
     environment:
       - "http.host=0.0.0.0"
@@ -31,7 +31,7 @@ services:
       co.elastic.logs/json.add_error_key: true
       co.elastic.logs/json.expand_keys: true
     #image: kibana:8.1.1
-    image: kibana:7.12.1
+    image: kibana:8.19.11
     container_name: kibana
     ports:
       - 5601:5601
@@ -52,10 +52,12 @@ services:
       co.elastic.logs/json.add_error_key: true
       co.elastic.logs/json.expand_keys: true
     #image: elastic/apm-server:8.1.1
-    image: elastic/apm-server:7.12.1
+    image: elastic/apm-server:8.19.11
     container_name: apm-server
     ports:
       - 8200:8200
+    volumes:
+      - ./apm-server.yml:/usr/share/apm-server/apm-server.yml
     networks:
       - elk
     depends_on:
@@ -87,8 +89,8 @@ services:
       co.elastic.logs/json.add_error_key: true
       co.elastic.logs/json.expand_keys: true
     #image: docker.elastic.co/beats/metricbeat:8.1.1
-    image: docker.elastic.co/beats/metricbeat:7.12.1
-    command: metricbeat -e -system.hostfs=/hostfs -strict.perms=false
+    image: docker.elastic.co/beats/metricbeat:8.19.11
+    command: metricbeat run -e --system.hostfs=/hostfs --strict.perms=false
     container_name: metricbeat
     user: root
     volumes:
@@ -110,7 +112,7 @@ services:
       co.elastic.logs/json.add_error_key: true
       co.elastic.logs/json.expand_keys: true
     #image: docker.elastic.co/beats/filebeat:8.1.1
-    image: docker.elastic.co/beats/filebeat:7.12.1
+    image: docker.elastic.co/beats/filebeat:8.19.11
     container_name: filebeat
     # Need to override user so we can access the log files, and docker.sock
     user: root
