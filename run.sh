@@ -5,7 +5,7 @@ echo ""
 echo ""
 
 # Start up all services
-docker-compose up -d
+docker compose up -d
 
 IP=$(curl checkip.amazonaws.com)
 
