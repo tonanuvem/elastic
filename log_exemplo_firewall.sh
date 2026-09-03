@@ -35,6 +35,7 @@ INDEX_NAME="ufw_logs"
 PIPELINE_NAME="ufw_logs_pipeline"
 
 LOG_FILE="./files/exemplo_firewall.log"
+LOG_ZIP="./files/exemplo_firewall.zip"
 
 BULK_FILE="/tmp/ufw_logs_bulk.ndjson"
 
@@ -55,15 +56,32 @@ echo ""
 # ============================================================
 
 if [ ! -f "$LOG_FILE" ]; then
-    echo "❌ Arquivo não encontrado:"
-    echo ""
-    echo "   $LOG_FILE"
-    echo ""
-    echo "Verifique se o arquivo está em:"
-    echo ""
-    echo "   ./files/exemplo_firewall.log"
-    echo ""
-    exit 1
+
+    # O repositório versiona apenas o .zip; extrai o .log sob demanda.
+    if [ -f "$LOG_ZIP" ]; then
+
+        echo "ℹ️  $LOG_FILE não encontrado. Extraindo de $LOG_ZIP..."
+        echo ""
+
+        # -j (junk paths) grava o arquivo direto em ./files/,
+        # ignorando a subpasta 'exemplo_firewall/' interna do zip.
+        unzip -o -j "$LOG_ZIP" "*/exemplo_firewall.log" -d ./files/ >/dev/null
+
+    fi
+
+    if [ ! -f "$LOG_FILE" ]; then
+        echo "❌ Arquivo não encontrado:"
+        echo ""
+        echo "   $LOG_FILE"
+        echo ""
+        echo "Verifique se existe o arquivo ou o zip em:"
+        echo ""
+        echo "   ./files/exemplo_firewall.log"
+        echo "   ./files/exemplo_firewall.zip"
+        echo ""
+        exit 1
+    fi
+
 fi
 
 
@@ -339,10 +357,12 @@ echo ""
 # Verifica se índice já existe
 # ------------------------------------------------------------
 
+# Usa -I (HEAD real). Obs.: com "-X HEAD" o curl fica aguardando um corpo
+# de resposta que nunca chega e trava ate o timeout.
 INDEX_EXISTS=$(es_curl \
     -o /dev/null \
     -w "%{http_code}" \
-    -X HEAD \
+    -I \
     "${ES_URL}/${INDEX_NAME}")
 
 
@@ -374,7 +394,9 @@ fi
 # Cria índice
 # ------------------------------------------------------------
 
-INDEX_RESPONSE=$(echo "$MAPPING_JSON" | \
+# A criacao do indice exige o wrapper "mappings"; MAPPING_JSON contem
+# apenas o bloco "properties".
+INDEX_RESPONSE=$(echo "{ \"mappings\": ${MAPPING_JSON} }" | \
     docker exec -i "$ES_CONTAINER" \
     curl -sS \
     -X PUT \
