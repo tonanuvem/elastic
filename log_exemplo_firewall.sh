@@ -35,7 +35,7 @@ INDEX_NAME="ufw_logs"
 PIPELINE_NAME="ufw_logs_pipeline"
 
 LOG_FILE="./files/exemplo_firewall.log"
-LOG_TARGZ="./files/exemplo_firewall.tar.gz"
+LOG_ZIP="./files/exemplo_firewall.zip"
 
 BULK_FILE="/tmp/ufw_logs_bulk.ndjson"
 
@@ -60,13 +60,15 @@ echo ""
 
 if [ ! -f "$LOG_FILE" ]; then
 
-    # O repositório versiona apenas o .tar.gz; extrai o .log sob demanda.
-    if [ -f "$LOG_TARGZ" ]; then
+    # O repositório versiona apenas o .zip; extrai o .log sob demanda.
+    if [ -f "$LOG_ZIP" ]; then
 
-        echo "ℹ️  $LOG_FILE não encontrado. Extraindo de $LOG_TARGZ..."
+        echo "ℹ️  $LOG_FILE não encontrado. Extraindo de $LOG_ZIP..."
         echo ""
 
-        tar -xzf "$LOG_TARGZ" -C ./files/
+        # -j (junk paths) grava o arquivo direto em ./files/,
+        # ignorando a subpasta 'exemplo_firewall/' interna do zip.
+        unzip -o -j "$LOG_ZIP" "*/exemplo_firewall.log" -d ./files/ >/dev/null
 
     fi
 
@@ -75,10 +77,10 @@ if [ ! -f "$LOG_FILE" ]; then
         echo ""
         echo "   $LOG_FILE"
         echo ""
-        echo "Verifique se existe o arquivo ou o tar.gz em:"
+        echo "Verifique se existe o arquivo ou o zip em:"
         echo ""
         echo "   ./files/exemplo_firewall.log"
-        echo "   ./files/exemplo_firewall.tar.gz"
+        echo "   ./files/exemplo_firewall.zip"
         echo ""
         exit 1
     fi
