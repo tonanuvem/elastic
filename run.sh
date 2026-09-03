@@ -56,6 +56,8 @@ fi
 echo "Executando configuração dos logs..."
 echo ""
 
+unzip ./files/exemplo_firewall.zip
+
 ./log_exemplo_firewall.sh
 
 # ------------------------------------------------------------
