@@ -35,9 +35,12 @@ INDEX_NAME="ufw_logs"
 PIPELINE_NAME="ufw_logs_pipeline"
 
 LOG_FILE="./files/exemplo_firewall.log"
-LOG_ZIP="./files/exemplo_firewall.zip"
+LOG_TARGZ="./files/exemplo_firewall.tar.gz"
 
 BULK_FILE="/tmp/ufw_logs_bulk.ndjson"
+
+# Quantidade de documentos por lote no envio via Bulk API
+BATCH_SIZE=5000
 
 
 # ============================================================
@@ -57,15 +60,13 @@ echo ""
 
 if [ ! -f "$LOG_FILE" ]; then
 
-    # O repositório versiona apenas o .zip; extrai o .log sob demanda.
-    if [ -f "$LOG_ZIP" ]; then
+    # O repositório versiona apenas o .tar.gz; extrai o .log sob demanda.
+    if [ -f "$LOG_TARGZ" ]; then
 
-        echo "ℹ️  $LOG_FILE não encontrado. Extraindo de $LOG_ZIP..."
+        echo "ℹ️  $LOG_FILE não encontrado. Extraindo de $LOG_TARGZ..."
         echo ""
 
-        # -j (junk paths) grava o arquivo direto em ./files/,
-        # ignorando a subpasta 'exemplo_firewall/' interna do zip.
-        unzip -o -j "$LOG_ZIP" "*/exemplo_firewall.log" -d ./files/ >/dev/null
+        tar -xzf "$LOG_TARGZ" -C ./files/
 
     fi
 
@@ -74,10 +75,10 @@ if [ ! -f "$LOG_FILE" ]; then
         echo ""
         echo "   $LOG_FILE"
         echo ""
-        echo "Verifique se existe o arquivo ou o zip em:"
+        echo "Verifique se existe o arquivo ou o tar.gz em:"
         echo ""
         echo "   ./files/exemplo_firewall.log"
-        echo "   ./files/exemplo_firewall.zip"
+        echo "   ./files/exemplo_firewall.tar.gz"
         echo ""
         exit 1
     fi
@@ -502,78 +503,75 @@ fi
 
 
 # ------------------------------------------------------------
-# Copia Bulk para Elasticsearch
+# Divide o NDJSON em lotes (BATCH_SIZE docs = BATCH_SIZE*2 linhas)
 # ------------------------------------------------------------
 
-docker cp \
-    "$BULK_FILE" \
-    "${ES_CONTAINER}:/tmp/ufw_logs_bulk.ndjson"
+PARTS_DIR=$(mktemp -d)
+
+split -l "$((BATCH_SIZE * 2))" "$BULK_FILE" "${PARTS_DIR}/part_"
+
+DOC_TOTAL=$(( $(wc -l < "$BULK_FILE" | tr -d ' ') / 2 ))
+TOTAL_BATCHES=$(ls "${PARTS_DIR}"/part_* | wc -l | tr -d ' ')
 
 
 # ------------------------------------------------------------
-# Executa Bulk API
+# Envia cada lote e mostra progresso em %
 # ------------------------------------------------------------
 
-echo "Enviando documentos para Elasticsearch..."
+echo "Enviando ${DOC_TOTAL} documentos em ${TOTAL_BATCHES} lote(s) de ${BATCH_SIZE}..."
 echo ""
 
+SENT=0
+BATCH_NUM=0
+FAILED_BATCHES=0
 
-BULK_RESPONSE=$(docker exec "$ES_CONTAINER" \
-    curl -sS \
-    -X POST \
-    "${ES_URL}/${INDEX_NAME}/_bulk?pipeline=${PIPELINE_NAME}" \
-    -H "Content-Type: application/x-ndjson" \
-    --data-binary "@/tmp/ufw_logs_bulk.ndjson"
-)
+for part in "${PARTS_DIR}"/part_*; do
 
+    BATCH_NUM=$((BATCH_NUM + 1))
+    DOCS_IN_PART=$(( $(wc -l < "$part" | tr -d ' ') / 2 ))
 
-# ------------------------------------------------------------
-# Exibe resposta
-# ------------------------------------------------------------
+    BATCH_RESPONSE=$(docker exec -i "$ES_CONTAINER" \
+        curl -sS \
+        -X POST \
+        "${ES_URL}/${INDEX_NAME}/_bulk?pipeline=${PIPELINE_NAME}" \
+        -H "Content-Type: application/x-ndjson" \
+        --data-binary @- < "$part")
 
-echo "$BULK_RESPONSE" | \
-    python3 -m json.tool 2>/dev/null || \
-    echo "$BULK_RESPONSE"
-
-
-# ------------------------------------------------------------
-# Verifica erros
-# ------------------------------------------------------------
-
-ERRORS=$(echo "$BULK_RESPONSE" | python3 -c '
-
-import json
-import sys
-
+    # Verifica apenas a flag de erro (nao imprime a resposta inteira)
+    ERRORS=$(echo "$BATCH_RESPONSE" | python3 -c '
+import json, sys
 try:
-
-    data = json.load(sys.stdin)
-
-    print(
-        "true"
-        if data.get("errors")
-        else "false"
-    )
-
+    print("true" if json.load(sys.stdin).get("errors") else "false")
 except Exception:
-
     print("unknown")
-
 ')
 
+    if [ "$ERRORS" = "true" ]; then
+        FAILED_BATCHES=$((FAILED_BATCHES + 1))
+    fi
 
-if [ "$ERRORS" = "true" ]; then
+    SENT=$((SENT + DOCS_IN_PART))
+    PCT=$(( SENT * 100 / DOC_TOTAL ))
 
-    echo ""
-    echo "❌ O Elasticsearch retornou erros durante a importação."
+    # \r atualiza a mesma linha em vez de rolar a tela
+    printf "\r   [%3d%%] lote %d/%d  —  %d/%d docs" \
+        "$PCT" "$BATCH_NUM" "$TOTAL_BATCHES" "$SENT" "$DOC_TOTAL"
+
+done
+
+printf "\n\n"
+
+rm -rf "$PARTS_DIR"
+
+
+if [ "$FAILED_BATCHES" -gt 0 ]; then
+
+    echo "❌ ${FAILED_BATCHES} lote(s) retornaram erros durante a importação."
     echo ""
 
     exit 1
 
 fi
-
-
-echo ""
 echo "✅ Logs importados com sucesso."
 
 
@@ -630,27 +628,18 @@ DATA_VIEW_RESPONSE=$(curl -sS \
 )
 
 
-echo "$DATA_VIEW_RESPONSE" | \
-    python3 -m json.tool 2>/dev/null || \
-    echo "$DATA_VIEW_RESPONSE"
-
-
-# ------------------------------------------------------------
-# Verifica resultado
-# ------------------------------------------------------------
-
+# Verifica resultado (sem imprimir a resposta JSON inteira)
 if echo "$DATA_VIEW_RESPONSE" | \
     grep -q '"type":"index-pattern"'; then
 
-    echo ""
     echo "✅ Data View criado:"
     echo "   $INDEX_NAME"
 
 else
 
-    echo ""
     echo "⚠️  Não foi possível confirmar a criação do Data View."
-    echo "    Verifique a resposta do Kibana acima."
+    echo "    Resposta do Kibana:"
+    echo "    $DATA_VIEW_RESPONSE"
 
 fi
 
@@ -660,9 +649,6 @@ fi
 # ============================================================
 
 rm -f "$BULK_FILE"
-
-docker exec "$ES_CONTAINER" \
-    rm -f /tmp/ufw_logs_bulk.ndjson 2>/dev/null || true
 
 
 # ============================================================
