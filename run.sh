@@ -56,8 +56,8 @@ fi
 echo "Executando configuração dos logs..."
 echo ""
 
-unzip ./files/exemplo_firewall.zip
-
+# A extração do exemplo_firewall.zip é feita dentro do log_exemplo_firewall.sh
+# (unzip -o -j para ./files/), então não é necessário descompactar aqui.
 ./log_exemplo_firewall.sh
 
 # ------------------------------------------------------------
