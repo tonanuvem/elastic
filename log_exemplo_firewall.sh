@@ -13,6 +13,7 @@
 #   4. Cria Index + Mapping
 #   5. Importa os logs usando Bulk API
 #   6. Cria Data View no Kibana
+#   7. Importa o Dashboard no Kibana
 #
 # Elasticsearch/Kibana:
 #   7.12.1
@@ -36,6 +37,10 @@ PIPELINE_NAME="ufw_logs_pipeline"
 
 LOG_FILE="./files/exemplo_firewall.log"
 LOG_ZIP="./files/exemplo_firewall.zip"
+
+# Dashboard (tambem vem dentro do zip, no formato legado _id/_type/_source)
+DASHBOARD_FILE="./files/dashboard.json"
+DASHBOARD_NDJSON="/tmp/ufw_dashboard.ndjson"
 
 BULK_FILE="/tmp/ufw_logs_bulk.ndjson"
 
@@ -611,7 +616,7 @@ echo "📊 Documentos no índice: $COUNT"
 
 echo ""
 echo "------------------------------------------------------------"
-echo "5/5 - Criando Data View no Kibana"
+echo "5/6 - Criando Data View no Kibana"
 echo "------------------------------------------------------------"
 echo ""
 
@@ -647,10 +652,123 @@ fi
 
 
 # ============================================================
+# 6/6 - DASHBOARD
+# ============================================================
+
+echo ""
+echo "------------------------------------------------------------"
+echo "6/6 - Importando Dashboard no Kibana"
+echo "------------------------------------------------------------"
+echo ""
+
+
+# ------------------------------------------------------------
+# Extrai o dashboard.json do zip (formato legado _id/_type/_source)
+# ------------------------------------------------------------
+
+if [ ! -f "$DASHBOARD_FILE" ] && [ -f "$LOG_ZIP" ]; then
+    unzip -o -j "$LOG_ZIP" "*/dashboard.json" -d ./files/ >/dev/null
+fi
+
+
+if [ ! -f "$DASHBOARD_FILE" ]; then
+    echo "⚠️  $DASHBOARD_FILE não encontrado; pulando importação do dashboard."
+else
+
+    # --------------------------------------------------------
+    # Converte o formato legado ( [{_id,_type,_source,...}] )
+    # para o NDJSON que a API /_import espera
+    # ( {id,type,attributes,references,migrationVersion} ).
+    # --------------------------------------------------------
+    python3 - "$DASHBOARD_FILE" > "$DASHBOARD_NDJSON" <<'PY'
+import json, sys
+
+objs = json.load(open(sys.argv[1], encoding="utf-8"))
+
+for o in objs:
+    rec = {
+        "id": o["_id"],
+        "type": o["_type"],
+        "attributes": o.get("_source", {}),
+        "references": o.get("_references", []),
+    }
+    if "_migrationVersion" in o:
+        rec["migrationVersion"] = o["_migrationVersion"]
+    print(json.dumps(rec, ensure_ascii=False))
+PY
+
+    echo "Enviando objetos salvos para o Kibana..."
+
+    # 1a tentativa: import normal (sobrescrevendo conflitos)
+    IMPORT_RESPONSE=$(curl -sS \
+        -X POST \
+        "${KIBANA_URL}/api/saved_objects/_import?overwrite=true" \
+        -H "kbn-xsrf: true" \
+        --form file=@"${DASHBOARD_NDJSON}")
+
+    # Se o import falhar (ex.: um filtro antigo referencia um index-pattern
+    # que nao existe mais), reimporta via _resolve_import_errors ignorando as
+    # referencias faltantes -- como faz o passo "resolver" da UI. O /_import
+    # do Kibana e transacional: uma unica referencia faltante reverte TODOS os
+    # objetos, entao os retries precisam listar TODOS eles, nao so os que
+    # deram erro.
+    NEED_RESOLVE=$(echo "$IMPORT_RESPONSE" | python3 -c '
+import json, sys
+try:
+    print("no" if json.load(sys.stdin).get("success") else "yes")
+except Exception:
+    print("no")
+')
+
+    if [ "$NEED_RESOLVE" = "yes" ]; then
+
+        RETRIES=$(python3 -c '
+import json, sys
+retries = [
+    {"type": o["type"], "id": o["id"],
+     "overwrite": True, "ignoreMissingReferences": True}
+    for o in (json.loads(l) for l in open(sys.argv[1]) if l.strip())
+]
+print(json.dumps(retries))
+' "$DASHBOARD_NDJSON")
+
+        IMPORT_RESPONSE=$(curl -sS \
+            -X POST \
+            "${KIBANA_URL}/api/saved_objects/_resolve_import_errors" \
+            -H "kbn-xsrf: true" \
+            --form file=@"${DASHBOARD_NDJSON}" \
+            --form "retries=${RETRIES}")
+    fi
+
+    # Relatorio final do import (conciso)
+    echo "$IMPORT_RESPONSE" | python3 -c '
+import json, sys
+try:
+    r = json.load(sys.stdin)
+except Exception:
+    print("⚠️  Resposta inesperada do Kibana."); sys.exit()
+
+if r.get("success"):
+    print("✅ Dashboard importado: %d objeto(s) salvos." % r.get("successCount", 0))
+    for o in r.get("successResults", []):
+        if o.get("type") == "dashboard":
+            print("   Dashboard: " + o.get("meta", {}).get("title", o.get("id")))
+else:
+    print("⚠️  Falha ao importar alguns objetos:")
+    for e in r.get("errors", []):
+        print("   - %s %s: %s" % (e.get("type"), e.get("id"),
+                                  e.get("error", {}).get("type")))
+'
+
+fi
+
+
+# ============================================================
 # LIMPEZA
 # ============================================================
 
 rm -f "$BULK_FILE"
+rm -f "$DASHBOARD_NDJSON"
 
 
 # ============================================================
@@ -673,6 +791,10 @@ echo ""
 
 echo "Data View:"
 echo "   $INDEX_NAME"
+echo ""
+
+echo "Dashboard:"
+echo "   [Shell] UFW"
 echo ""
 
 echo "Documentos:"
